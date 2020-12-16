@@ -107,7 +107,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/btn_chart"
+                        android:id="@+id/btn_visualization"
                         android:src="@drawable/visualizacion"
                         android:layout_width="80dp"
                         android:layout_height="80dp" />

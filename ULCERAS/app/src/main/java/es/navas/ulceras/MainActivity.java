@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
@@ -22,6 +24,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -50,15 +55,39 @@ public class MainActivity extends AppCompatActivity {
 
     // --- END MQTT ---
 
+    private ImageView btn_disconnect, btn_chart, btn_visualization, btn_position_RT, btn_help, btn_history;
+
+    VisualizationDialog visualizationDialog;
+    private ArrayList<Sensor> myDevices = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new Thread(new AsynSub()).start();
-        Utils.log("hola mundo");
+        Utils.log("Setup");
+
+        new Thread(new AsynSub()).start(); // Subscription to topics
+        visualizationDialog = new VisualizationDialog(this); // Inicializar cuadro de dialogo con el context del MainActivity
+
+        myDevices.add(new Sensor("Vibration_sensor_1")); // name: nombre que le hemos asignado al sensor en el script Python, NO COINCIDE con nombre de la entidad del sensor en HomeAssistant
+        myDevices.add(new Sensor("Vibration_sensor_2"));
+        myDevices.add(new Sensor("Vibration_sensor_3"));
+
+        Utils.log("Setup done, Hello world!");
+
+        btn_visualization = findViewById(R.id.btn_visualization);
+
+        btn_visualization.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visualizationDialog.show();
+            }
+        });
 
     }
+
+
 
     public class MyListener implements Listener {
 
@@ -74,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPublish(UTF8Buffer topic, Buffer body, Runnable ack) {
-            //eInfo.setText("Recibido  "+new String(body.data)+" de "+topic.toString());
             String msg = "void";
             String sTopic = decode(topic);
             try {
@@ -86,6 +114,31 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
+
+            if (sTopic.equals("/test")) {
+                Utils.log("Test MQTT " + msg);
+            }else{ // SensorData
+                Gson gson = new Gson();
+                Vdata[] datos = gson.fromJson(msg, Vdata[].class);
+
+                for(int i = 0; i < datos.length; i++){
+                    Utils.log("datos "+i+":"+(float)datos[i].getX()+" - "+(float)datos[i].getY()+" - "+(float)datos[i].getZ());
+                }
+
+                if (sTopic.contains(myDevices.get(0).getName())) { // Sensor 1
+                    // cdd.setData_chart_A(datos);
+                    Utils.log("Nuevos datos Sensor 1");
+                    SensorDataVisualization.addDataA(datos);
+                } else if (sTopic.contains(myDevices.get(1).getName())) { // Sensor 2
+                    // cdd.setData_chart_B(datos);
+                    Utils.log("Nuevos datos Sensor 2");
+                    SensorDataVisualization.setDataChartB(datos);
+                } else if (sTopic.contains(myDevices.get(2).getName())){ // Sensor 3
+                    Utils.log("Nuevos datos Sensor 3");
+                    SensorDataVisualization.setDataChartC(datos);
+                }
+            }
+
             ack.run();
         }
 
@@ -112,10 +165,10 @@ public class MainActivity extends AppCompatActivity {
 
     public class AsynSub implements Runnable{
 
-        //String subtopic = "#";
+
         @Override
         public void run() {
-            Topic[] topics = {new Topic("/#", QoS.AT_LEAST_ONCE), new Topic("homeassistant/test", QoS.AT_LEAST_ONCE)};
+            Topic[] topics = {new Topic("/test", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE)};
             getMqtt().subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                     Utils.log("Subscripto a mis topics");
