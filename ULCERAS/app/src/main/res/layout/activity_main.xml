@@ -70,17 +70,17 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/btn_scan"
-                        android:src="@drawable/lupa"
+                        android:id="@+id/btn_connection"
+                        android:src="@drawable/disconnect"
                         android:layout_width="80dp"
                         android:layout_height="80dp" />
 
                     <TextView
-                        android:id="@+id/tv_start"
+                        android:id="@+id/tv_connection"
                         android:layout_marginTop="12dp"
                         android:textColor="#6f6f6f"
                         android:textSize="18sp"
-                        android:text="Conectar"
+                        android:text="Desconectar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
