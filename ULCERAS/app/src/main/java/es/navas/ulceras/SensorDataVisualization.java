@@ -18,14 +18,21 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 
+import static es.navas.ulceras.MainActivity.chartBData;
+import static es.navas.ulceras.MainActivity.chartCData;
+import static es.navas.ulceras.MainActivity.chartDData;
+import static es.navas.ulceras.MainActivity.indexB;
+import static es.navas.ulceras.MainActivity.indexC;
+import static es.navas.ulceras.MainActivity.indexD;
+
 public class SensorDataVisualization extends AppCompatActivity {
 
-    private Button btn_close;
+   // private Button btn_close;
     private static LineChart chartB, chartC, chartD;
 
-    private static int indexB, indexC, indexD;
-
-    private static SensorData  chartBData, chartCData, chartDData;
+    //private static int indexB, indexC, indexD;
+    //
+    //    //private static SensorData  chartBData, chartCData, chartDData;
 
     //Handler handler = new Handler();
 
@@ -35,13 +42,13 @@ public class SensorDataVisualization extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor_data_visualization);
 
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         chartB = (LineChart)findViewById(R.id.chartB);
         chartC = (LineChart)findViewById(R.id.chartC);
         chartD = (LineChart)findViewById(R.id.chartA);
 
-        btn_close = (Button) findViewById(R.id.btn_sd_close);
+       // btn_close = (Button) findViewById(R.id.btn_sd_close);
 
 
         chartB.setDragEnabled(true);
@@ -53,23 +60,30 @@ public class SensorDataVisualization extends AppCompatActivity {
         chartC.setScaleEnabled(true);
         chartD.setScaleEnabled(true);
 
-        btn_close.setOnClickListener(new View.OnClickListener() {
+      /*  btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
+       */
 
 
+
+        /*
         chartBData = new SensorData();
         chartCData = new SensorData();
         chartDData = new SensorData();
 
+         */
 
+/*
         indexB = 0;
         indexC = 0;
         indexD = 0;
+
+ */
 
         // test -----
 
@@ -97,6 +111,15 @@ public class SensorDataVisualization extends AppCompatActivity {
         //refreshChartA();
 
         //ejecutarTarea();
+
+        if(chartDData.getSize() > 0)
+            setDataChartD();
+
+        if(chartBData.getSize() > 0)
+            setDataChartB();
+
+        if(chartCData.getSize() > 0)
+            setDataChartC();
     }
 
     /*
@@ -220,23 +243,9 @@ public class SensorDataVisualization extends AppCompatActivity {
 
 
 
-    public static void setDataChartB(Vdata[] datos){
-        for(Vdata data: datos){
-            chartBData.add(indexB, (float)data.getX(), (float)data.getY(), (float)data.getZ());
+    public static void setDataChartB(){
 
-            indexB++;
-
-            if(chartBData.xData.size() > 30){
-                int dif = chartBData.xData.size() - 30;
-                for(int i = 0; i < dif; i++){
-                    chartBData.xData.remove(0);
-                    chartBData.yData.remove(0);
-                    chartBData.zData.remove(0);
-                }
-
-            }
-        }
-
+        Utils.log("ENTRA");
         LineDataSet setX, setY, setZ;
 
         setX = new LineDataSet(chartBData.xData, "X");
@@ -252,7 +261,7 @@ public class SensorDataVisualization extends AppCompatActivity {
 
         chartB.setVisibleXRangeMaximum(5);
         if(indexB > 10)
-            chartB.moveViewToX(indexB - 10);
+            chartB.moveViewToX(indexB);
         else
             chartB.invalidate();
 
@@ -261,25 +270,12 @@ public class SensorDataVisualization extends AppCompatActivity {
             chartBData.clear();
             chartB.clear();
         }
+
+        Utils.log("FIN");
     }
 
-    public static void setDataChartC(Vdata[] datos){
-        for(Vdata data: datos){
-            chartCData.add(indexC,(float)data.getX(), (float)data.getY(), (float)data.getZ());
-
-            indexC++;
-
-            if(chartCData.xData.size() > 30){
-                int dif = chartCData.xData.size() - 30;
-                for(int i = 0; i < dif; i++){
-                    chartCData.xData.remove(0);
-                    chartCData.yData.remove(0);
-                    chartCData.zData.remove(0);
-                }
-
-            }
-        }
-
+    public static void setDataChartC(){
+        Utils.log("ENTRA");
         LineDataSet setX, setY, setZ;
 
         setX = new LineDataSet(chartCData.xData, "X");
@@ -295,7 +291,7 @@ public class SensorDataVisualization extends AppCompatActivity {
 
         chartC.setVisibleXRangeMaximum(5);
         if(indexC > 10)
-            chartC.moveViewToX(indexC - 10);
+            chartC.moveViewToX(indexC);
         else
             chartC.invalidate();
 
@@ -304,29 +300,11 @@ public class SensorDataVisualization extends AppCompatActivity {
             chartCData.clear();
             chartC.clear();
         }
+        Utils.log("FIN");
     }
 
-    public static void setDataChartD(Vdata[] datos){
-        Utils.log("setDataChartD");
-        for(Vdata data: datos){
-            Utils.log("entra");
-            chartDData.add(indexD,(float)data.getX(), (float)data.getY(), (float)data.getZ());
-
-            indexD++;
-
-            if(chartDData.xData.size() > 30){
-                int dif = chartDData.xData.size() - 30;
-                for(int i = 0; i < dif; i++){
-                    chartDData.xData.remove(0);
-                    chartDData.yData.remove(0);
-                    chartDData.zData.remove(0);
-                }
-
-            }
-        }
-        Utils.log("chartDData size: "+chartDData.xData.size());
-        Utils.log("indexD: "+indexD);
-
+    public static void setDataChartD(){
+        Utils.log("ENTRA");
         LineDataSet setX, setY, setZ;
 
         setX = new LineDataSet(chartDData.xData, "X");
@@ -336,35 +314,36 @@ public class SensorDataVisualization extends AppCompatActivity {
         setZ = new LineDataSet(chartDData.zData, "Z");
         setZ.setColor(Color.GREEN);
 
-        Utils.log("set linedataset");
+        //Utils.log("set linedataset");
 
         LineData data = new LineData(setX, setY, setZ);
 
         chartD.setData(data);
 
-        Utils.log("setData");
+        //Utils.log("setData");
 
         chartD.setVisibleXRangeMaximum(5);
-        Utils.log("2");
+        //Utils.log("2");
         if(indexD > 10) {
 
-            chartD.moveViewToX(indexD - 10);
-            Utils.log("moveViewToX");
+            chartD.moveViewToX(indexD);
+            //Utils.log("moveViewToX");
         }else {
             chartD.invalidate();
-            Utils.log("invalidate");
+            //Utils.log("invalidate");
         }
 
         if(indexD == Integer.MAX_VALUE){
-            Utils.log("nodebe");
+            //Utils.log("nodebe");
             indexD = 0;
             chartDData.clear();
             chartD.clear();
         }
-        Utils.log("fin");
+        Utils.log("FIN");
     }
 
 
+    /*
     private class SensorData{
         public ArrayList<Entry> xData = new ArrayList<>();
         public ArrayList<Entry> yData = new ArrayList<>();

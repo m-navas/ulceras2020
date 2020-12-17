@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
 
     // --- END MQTT ---
 
+    // --- SensorData Chart Parameters ---
+    public static int indexB, indexC, indexD;
+
+    public static SensorData  chartBData, chartCData, chartDData;
+
     private ImageView btn_disconnect, btn_chart, btn_visualization, btn_position_RT, btn_help, btn_history;
 
     VisualizationDialog visualizationDialog;
@@ -85,6 +90,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // SensorData parameters init
+        sensorDataInit();
+    }
+
+    private void addNewSensorData(Vdata[] datos, SensorData chartData, int index){
+        for(Vdata data: datos){
+            chartData.add(index, (float)data.getX(), (float)data.getY(), (float)data.getZ());
+
+            index++;
+
+            if(chartData.getSize() > 30){
+                int dif = chartData.getSize() - 30;
+                for(int i = 0; i < dif; i++){
+                    chartData.xData.remove(0);
+                    chartData.yData.remove(0);
+                    chartData.zData.remove(0);
+                }
+
+            }
+        }
+
+    }
+
+    private void sensorDataInit(){
+        chartBData = new SensorData();
+        chartCData = new SensorData();
+        chartDData = new SensorData();
+
+        indexB = 0;
+        indexC = 0;
+        indexD = 0;
     }
 
 
@@ -128,14 +164,67 @@ public class MainActivity extends AppCompatActivity {
                 if (sTopic.contains(myDevices.get(0).getName())) { // Sensor 1
                     // cdd.setData_chart_A(datos);
                     Utils.log("Nuevos datos Sensor 1");
-                    SensorDataVisualization.setDataChartD(datos);
+                    //addNewSensorData(datos, chartDData, indexD);
+                    for(Vdata data: datos){
+                        chartDData.add(indexD, (float)data.getX(), (float)data.getY(), (float)data.getZ());
+
+                        indexD++;
+
+                        if(chartDData.getSize() > 30){
+                            int dif = chartDData.getSize() - 30;
+                            for(int i = 0; i < dif; i++){
+                                chartDData.xData.remove(0);
+                                chartDData.yData.remove(0);
+                                chartDData.zData.remove(0);
+                            }
+
+                        }
+                    }
+                    Utils.log("chartDData size: "+chartDData.getSize()+" - indexD: "+indexD);
+                    SensorDataVisualization.setDataChartD();
                 } else if (sTopic.contains(myDevices.get(1).getName())) { // Sensor 2
                     // cdd.setData_chart_B(datos);
                     Utils.log("Nuevos datos Sensor 2");
-                    SensorDataVisualization.setDataChartB(datos);
+
+                    for(Vdata data: datos){
+                        chartBData.add(indexB, (float)data.getX(), (float)data.getY(), (float)data.getZ());
+
+                        indexB++;
+
+                        if(chartBData.getSize() > 30){
+                            int dif = chartBData.getSize() - 30;
+                            for(int i = 0; i < dif; i++){
+                                chartBData.xData.remove(0);
+                                chartBData.yData.remove(0);
+                                chartBData.zData.remove(0);
+                            }
+
+                        }
+                    }
+
+                    Utils.log("chartBData size: "+chartBData.getSize()+" - indexB: "+indexB);
+                    SensorDataVisualization.setDataChartB();
                 } else if (sTopic.contains(myDevices.get(2).getName())){ // Sensor 3
                     Utils.log("Nuevos datos Sensor 3");
-                    SensorDataVisualization.setDataChartC(datos);
+
+                    for(Vdata data: datos){
+                        chartCData.add(indexC, (float)data.getX(), (float)data.getY(), (float)data.getZ());
+
+                        indexC++;
+
+                        if(chartCData.getSize() > 30){
+                            int dif = chartCData.getSize() - 30;
+                            for(int i = 0; i < dif; i++){
+                                chartCData.xData.remove(0);
+                                chartCData.yData.remove(0);
+                                chartCData.zData.remove(0);
+                            }
+
+                        }
+                    }
+
+                    Utils.log("chartCData size: "+chartCData.getSize()+" - indexC: "+indexC);
+                    SensorDataVisualization.setDataChartC();
                 }
             }
 
