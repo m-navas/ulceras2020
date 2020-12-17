@@ -6,31 +6,75 @@
     android:layout_height="match_parent"
     tools:context=".SensorDataVisualization">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartB"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
+    <TextView
+        android:id="@+id/tv_sensor1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Sensor 1"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="@+id/chartA"
+        app:layout_constraintStart_toStartOf="@+id/chartA"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_sensor3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:text="Sensor 3"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/chartC"
+        app:layout_constraintTop_toBottomOf="@+id/chartB" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:text="Sensor 2"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chartA" />
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartC"
+        android:id="@+id/chartB"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/chartC"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chartB" />
+        app:layout_constraintTop_toBottomOf="@+id/chartA">
+
+    </com.github.mikephil.charting.charts.LineChart>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chartC"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chartB"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chartA"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/chartB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.github.mikephil.charting.charts.LineChart>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
