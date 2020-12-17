@@ -1,4 +1,4 @@
-package es.navas.ulceras;
+package es.navas.ulceras.Utilities;
 
 public class Vdata {
     //Valores de los ejes del sensor

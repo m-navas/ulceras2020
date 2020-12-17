@@ -1,4 +1,4 @@
-package es.navas.ulceras;
+package es.navas.ulceras.Utilities;
 
 import android.util.Log;
 

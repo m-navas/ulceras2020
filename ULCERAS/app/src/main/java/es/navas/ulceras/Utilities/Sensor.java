@@ -1,4 +1,4 @@
-package es.navas.ulceras;
+package es.navas.ulceras.Utilities;
 
 public class Sensor {
     private String Name;

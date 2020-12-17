@@ -1,4 +1,4 @@
-package es.navas.ulceras;
+package es.navas.ulceras.Utilities;
 
 import com.github.mikephil.charting.data.Entry;
 
