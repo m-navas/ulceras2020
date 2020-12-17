@@ -2,7 +2,7 @@
 """
 Spyder Editor
 
-MQTT xiaomi sensors v3
+MQTT xiaomi sensors v5
 
 Recepción de datos por MQTT de los sensores ZigBee, llamada al servicio de persistencia
 para los nuevos datos recibidos y envio por MQTT de datos para terceras aplicaciones.
@@ -15,6 +15,8 @@ suscribirnos a los topic se creaban más de una instancia de suscripción que po
 comportamientos anómalos (repetición de mensajes)
 
 v4: envio de datos de lectura de los sensores de uno en uno para su visualización directa en la aplicación Android
+
+v5: respuesta en /connect/reply del estado de la conexión con los sensores
 
 """
 
@@ -158,9 +160,11 @@ def on_message(client, userdata, msg):
             client.reinitialise()
             mqtt_setup(client)
             print("Connected!")
+            myMqttClient.publish("/connect/reply", "Connected")
         elif data == 'F':
             client.unsubscribe("homeassistant/binary_sensor/#")
             print("Disconnected!")
+            myMqttClient.publish("/connect/reply", "Disconnected")
             
     # Converting string to list
     data = ast.literal_eval(data)
