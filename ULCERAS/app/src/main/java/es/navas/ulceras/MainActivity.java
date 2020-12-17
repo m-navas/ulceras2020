@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 if (sTopic.contains(myDevices.get(0).getName())) { // Sensor 1
                     // cdd.setData_chart_A(datos);
                     Utils.log("Nuevos datos Sensor 1");
-                    SensorDataVisualization.addDataA(datos);
+                    SensorDataVisualization.setDataChartD(datos);
                 } else if (sTopic.contains(myDevices.get(1).getName())) { // Sensor 2
                     // cdd.setData_chart_B(datos);
                     Utils.log("Nuevos datos Sensor 2");
