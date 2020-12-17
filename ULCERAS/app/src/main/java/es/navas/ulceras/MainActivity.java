@@ -153,7 +153,28 @@ public class MainActivity extends AppCompatActivity {
 
             if (sTopic.equals("/test")) {
                 Utils.log("Test MQTT " + msg);
+
+                // Deserializamos
+                Gson gson = new Gson();
+                Vdata dato = gson.fromJson(msg, Vdata.class);
+
+                Utils.log("dato recibido: "+dato.getX()+" - "+dato.getY()+" - "+dato.getZ()+" - "+dato.getT());
+
+                // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                chartDData.add(indexD, (float)dato.getX(), (float)dato.getY(), (float)dato.getZ());
+                indexD++;
+
+                if(chartDData.getSize() > 30){ // Borramos datos antiguos si se superan las 30 lecturas de datos
+                    chartDData.xData.remove(0);
+                    chartDData.yData.remove(0);
+                    chartDData.zData.remove(0);
+                }
+
+                // Actualizamos grafico
+                SensorDataVisualization.setDataChartD();
+
             }else{ // SensorData
+                /*
                 Gson gson = new Gson();
                 Vdata[] datos = gson.fromJson(msg, Vdata[].class);
 
@@ -161,9 +182,18 @@ public class MainActivity extends AppCompatActivity {
                     Utils.log("datos "+i+":"+(float)datos[i].getX()+" - "+(float)datos[i].getY()+" - "+(float)datos[i].getZ());
                 }
 
+                 */
+
+                // Deserializamos
+                Gson gson = new Gson();
+                Vdata dato = gson.fromJson(msg, Vdata.class);
+
                 if (sTopic.contains(myDevices.get(0).getName())) { // Sensor 1
-                    // cdd.setData_chart_A(datos);
                     Utils.log("Nuevos datos Sensor 1");
+                    /*
+                    PROCESADO DE UN BLOQUE DE DATOS
+                    // cdd.setData_chart_A(datos);
+
                     //addNewSensorData(datos, chartDData, indexD);
                     for(Vdata data: datos){
                         chartDData.add(indexD, (float)data.getX(), (float)data.getY(), (float)data.getZ());
@@ -182,10 +212,29 @@ public class MainActivity extends AppCompatActivity {
                     }
                     Utils.log("chartDData size: "+chartDData.getSize()+" - indexD: "+indexD);
                     SensorDataVisualization.setDataChartD();
-                } else if (sTopic.contains(myDevices.get(1).getName())) { // Sensor 2
-                    // cdd.setData_chart_B(datos);
-                    Utils.log("Nuevos datos Sensor 2");
 
+                     */
+
+
+                    //Utils.log("dato recibido: "+dato.getX()+" - "+dato.getY()+" - "+dato.getZ()+" - "+dato.getT());
+
+                    // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                    chartDData.add(indexD, (float)dato.getX(), (float)dato.getY(), (float)dato.getZ());
+                    indexD++;
+
+                    if(chartDData.getSize() > 30){ // Borramos datos antiguos si se superan las 30 lecturas de datos
+                        chartDData.xData.remove(0);
+                        chartDData.yData.remove(0);
+                        chartDData.zData.remove(0);
+                    }
+
+                    // Actualizamos grafico
+                    SensorDataVisualization.setDataChartD();
+
+                } else if (sTopic.contains(myDevices.get(1).getName())) { // Sensor 2
+
+                    Utils.log("Nuevos datos Sensor 2");
+                    /*
                     for(Vdata data: datos){
                         chartBData.add(indexB, (float)data.getX(), (float)data.getY(), (float)data.getZ());
 
@@ -204,9 +253,24 @@ public class MainActivity extends AppCompatActivity {
 
                     Utils.log("chartBData size: "+chartBData.getSize()+" - indexB: "+indexB);
                     SensorDataVisualization.setDataChartB();
+
+                     */
+                    // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                    chartBData.add(indexB, (float)dato.getX(), (float)dato.getY(), (float)dato.getZ());
+                    indexB++;
+
+                    if(chartBData.getSize() > 30){ // Borramos datos antiguos si se superan las 30 lecturas de datos
+                        chartBData.xData.remove(0);
+                        chartBData.yData.remove(0);
+                        chartBData.zData.remove(0);
+                    }
+
+                    // Actualizamos grafico
+                    SensorDataVisualization.setDataChartB();
+
                 } else if (sTopic.contains(myDevices.get(2).getName())){ // Sensor 3
                     Utils.log("Nuevos datos Sensor 3");
-
+                    /*
                     for(Vdata data: datos){
                         chartCData.add(indexC, (float)data.getX(), (float)data.getY(), (float)data.getZ());
 
@@ -224,6 +288,20 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Utils.log("chartCData size: "+chartCData.getSize()+" - indexC: "+indexC);
+                    SensorDataVisualization.setDataChartC();
+
+                     */
+                    // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                    chartCData.add(indexC, (float)dato.getX(), (float)dato.getY(), (float)dato.getZ());
+                    indexC++;
+
+                    if(chartCData.getSize() > 30){ // Borramos datos antiguos si se superan las 30 lecturas de datos
+                        chartCData.xData.remove(0);
+                        chartCData.yData.remove(0);
+                        chartCData.zData.remove(0);
+                    }
+
+                    // Actualizamos grafico
                     SensorDataVisualization.setDataChartC();
                 }
             }
