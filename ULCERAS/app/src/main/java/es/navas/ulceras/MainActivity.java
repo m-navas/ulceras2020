@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,10 +22,17 @@ import org.fusesource.mqtt.client.Topic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import es.navas.ulceras.Utilities.RegistroPosturas;
 import es.navas.ulceras.Utilities.Sensor;
 import es.navas.ulceras.Utilities.SensorData;
 import es.navas.ulceras.Utilities.Utils;
@@ -65,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     public static SensorData chartBData, chartCData, chartAData;
     // --- END SensorData Chart Parameters ---
 
-    private ImageView btn_connection, btn_chart, btn_visualization, btn_position_RT, btn_help, btn_history;
+    private ImageView btn_connection, btn_chart, btn_visualization, btn_help, btn_history;
     private TextView tv_connection;
 
     VisualizationDialog visualizationDialog;
@@ -75,15 +83,18 @@ public class MainActivity extends AppCompatActivity {
     private boolean connected;
     // --- END Sensors connection state ---
 
+    // --- BEGIN Posturas ---
+    public static ArrayList<RegistroPosturas.Posturas> registroGeneralPosturas; // Array FIFO donde almacenamos los nuevos datos de posturas
+    public static HashMap<String, String> registroGeneralClasses; // Estructura que contiene las distintas clases (posturas) que manejamos, se cambia dinamicamente en cada ejecucion de la App
+    public static boolean cambiosPosturalesState = false;
+    // --- END Posturas ---
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mainContext = this;
-        //mainLayout = findViewById(R.id.activity_main);
-
-
 
         Utils.log("Setup");
         connected = false;
@@ -97,6 +108,13 @@ public class MainActivity extends AppCompatActivity {
 
         // SensorData parameters init
         sensorDataInit();
+
+        // Posturas
+        registroGeneralPosturas = new ArrayList<>();
+        for(int i = 0; i < 960; i++)
+            registroGeneralPosturas.add(new RegistroPosturas.Posturas(0L, "None"));
+
+        registroGeneralClasses = new HashMap<>();
 
         Utils.log("Setup done, Hello world!");
 
@@ -120,15 +138,58 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Conectados ?
 
 
-        // Intentar conectar
+        // Intentar conectar con sensores al inicio
         changeSensorsState();
 
+    }
+
+    // --- BEGIN Posturas ---
+    // Añade los nuevos datos recibidos al array de datos que representaremos en el gráfico
+    private void nuevosDatosPosturas(String json){
+        Gson gson = new Gson();
+
+        // Deserialización
+        Type type = new TypeToken<RegistroPosturas>(){}.getType();
+        RegistroPosturas nuevoRegistro = gson.fromJson(json, type);
+
+
+        // Sustrae los datos
+        List<RegistroPosturas.Posturas> data = nuevoRegistro.getData();
+
+        // Ordena los datos por el timestamp
+        Collections.sort(data);
+
+
+        // Añadimos los nuevos datos al registro
+        for (RegistroPosturas.Posturas p : data){
+            registroGeneralPosturas.add(p);
+            registroGeneralPosturas.remove(0);
+        }
+
+
+        /*for (int i = registroGeneralPosturas.size() - 1; i > registroGeneralPosturas.size() - 6; i --){
+            Utils.log("Dato "+i+": "+registroGeneralPosturas.get(i).t);
+        }
+         */
+
+        //Establecer el numero de posturas distintas (classes) si no se ha realizado en esta ejecución de la App
+        if(registroGeneralClasses.isEmpty()){
+            for (Map.Entry<String, String> entry : nuevoRegistro.getClasses().entrySet()) {
+                System.out.println("clave=" + entry.getKey() + ", valor=" + entry.getValue());
+                registroGeneralClasses.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if(cambiosPosturalesState)
+            CambiosPosturales.drawChart();
 
 
     }
+    // --- END Posturas ---
+
+    // --- BEGIN Conexion/Desconexion ---
 
     private void changeSensorsState(){
         String msg;
@@ -140,7 +201,9 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new AsynPub(getMqtt(), "/connect", msg)).start();
     }
 
+    // --- END Conexion/Desconexion
 
+    // --- BEGIN SensorData ---
     private void sensorDataInit(){
         chartBData = new SensorData();
         chartCData = new SensorData();
@@ -151,23 +214,7 @@ public class MainActivity extends AppCompatActivity {
         indexA = 0;
     }
 
-    private void updateConnectionState(){
-        if(connected) {
-            Utils.log("Sensores estan conectados");
-            //btn_connection.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.disconnect)); // imagen de desconectar
-            btn_connection.setImageResource(R.drawable.disconnect);
-            Toast.makeText(getBaseContext(), "Sensores conectados!", Toast.LENGTH_SHORT).show();
-        }else {
-            Utils.log("Sensores estan desconectados");
-            //btn_connection.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.start)); // imagen de conectar
-            btn_connection.setImageResource(R.drawable.start);
-            Toast.makeText(getBaseContext(), "Sensores desconectados!", Toast.LENGTH_SHORT).show();
-        }
-
-        //setContentView(R.layout.activity_main);
-        //getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
-        onResume();
-    }
+    // --- END SensorData ---
 
     // --- BEGIN MQTT ---
     public class MyListener implements Listener {
@@ -196,7 +243,12 @@ public class MainActivity extends AppCompatActivity {
 
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
 
-            if( sTopic.equals("/connect/reply")) {
+            if(sTopic.equals("/positions")){ // datos de cambios posturales
+
+                Utils.log(msg);
+                nuevosDatosPosturas(msg);
+                ack.run();
+            } else if( sTopic.equals("/connect/reply")) { // conexion/desconexion
                 if(msg.equals("Connected"))
                     connected = true;
                 else if (msg.equals("Disconnected"))
@@ -292,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            Topic[] topics = {new Topic("/test", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE)};
+            Topic[] topics = {new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/#", QoS.AT_LEAST_ONCE)};
             getMqtt().subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                     Utils.log("Subscrito a mis topics");

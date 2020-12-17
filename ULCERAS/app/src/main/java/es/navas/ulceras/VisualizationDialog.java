@@ -11,8 +11,8 @@ import android.widget.Button;
 
 /*
     Dialogo que nos permite seleccionar el tipo de gráfico que deseammos visualizar:
-        - Datos de lectura de los sensores
-        - Datos de cambios posturales
+        - Datos de lectura de los sensores en RT
+        - Datos de cambios posturales en RT y carga de datos historicos
         - Datos de alertas
  */
 public class VisualizationDialog extends Dialog implements View.OnClickListener {
@@ -49,8 +49,8 @@ public class VisualizationDialog extends Dialog implements View.OnClickListener 
         btn_positions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent i = new Intent(context, PositionDataVisualization.class);
-                //context.startActivity(i);
+                Intent i = new Intent(context, CambiosPosturales.class);
+                context.startActivity(i);
             }
         });
 
