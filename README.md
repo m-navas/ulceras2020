@@ -1,4 +1,4 @@
-# ulceras2020
+# Proyecto Ulceras 2020
 
 ## ULCERAS App
 
@@ -14,3 +14,7 @@ para los nuevos datos recibidos y envio por MQTT de datos para terceras aplicaci
 Script que se encarga de implementar servicios que interactuan con la base de datos MySQL
 para almacenar de forma persistente y posteriormente recuperar datos de lectura de sensores y
 datos posturales
+
+## Positions_data_pub_loop.py
+
+Script que simula la generación y publicación de datos de cambios posturales.
