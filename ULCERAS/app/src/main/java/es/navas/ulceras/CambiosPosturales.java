@@ -1,14 +1,18 @@
 package es.navas.ulceras;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,6 +48,8 @@ import static es.navas.ulceras.MainActivity.cambiosPosturalesState;
 
 public class CambiosPosturales extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    public static Context cambiosPosturalesContext;
+
     private static HorizontalBarChart chartPosturas;
     private static ImageView iv_lastAct;
 
@@ -62,13 +68,23 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
 
     Integer time_interval = 30; // por defecto realizamos una consulta de 30 min
 
+    public static Handler UIHandler;
+
+    static
+    {
+        UIHandler = new Handler(Looper.getMainLooper());
+    }
+    public static void runOnUI(Runnable runnable) {
+        UIHandler.post(runnable);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cambios_posturales);
 
 
-
+        cambiosPosturalesContext = this;
 
         chartPosturas = findViewById(R.id.chartCambiosPosturales);
         iv_lastAct = findViewById(R.id.iv_lastPosture);
@@ -86,12 +102,12 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
 
         chartPosturas.getDescription().setText("Cambios de postura");
 
-        drawChart();
+        drawChart(false, 0);
 
         btn_load_data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Envia mensaje de solicitud de datos de cambios posturales almacenados en la BD
                 new Thread(new AsynPub(getMqtt(), "/record_data/recovery/positions", Integer.toString(time_interval))).start();
                 Utils.log("Peticion de consulta de datos en BD enviada");
             }
@@ -140,7 +156,18 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         }
     }
 
-    public static void drawChart(){
+    public static void drawChart(boolean historic, final int numDatos){
+        if(historic) {
+            Utils.log("Cargando "+numDatos+" datos");
+            runOnUI(new Runnable() {
+                public void run() {
+                    Toast.makeText(cambiosPosturalesContext, "Cargados "+numDatos+" datos", Toast.LENGTH_SHORT).show();
+                }
+            });
+            Utils.log("Cargados "+numDatos+" datos");
+        }
+
+
         ArrayList<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(0f, steps));
 
@@ -348,4 +375,6 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
             });
         }
     }
+
+
 }

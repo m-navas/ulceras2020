@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     // --- BEGIN Posturas ---
     // Añade los nuevos datos recibidos al array de datos que representaremos en el gráfico
-    private void nuevosDatosPosturas(String json){
+    private void nuevosDatosPosturas(String json, boolean historic){
         Gson gson = new Gson();
 
         // Deserialización
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Sustrae los datos
         List<RegistroPosturas.Posturas> data = nuevoRegistro.getData();
+
 
         // Ordena los datos por el timestamp
         Collections.sort(data);
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(cambiosPosturalesState)
-            CambiosPosturales.drawChart();
+            CambiosPosturales.drawChart(historic, data.size());
 
 
     }
@@ -243,10 +244,16 @@ public class MainActivity extends AppCompatActivity {
 
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
 
-            if(sTopic.equals("/positions")){ // datos de cambios posturales
+            if(sTopic.equals("/record_data/recovery/positions/reply")){ // recuperacion de datos de cambios posturales desde la BD
+                Utils.log("Mensaje MQTT recibido de /record_data/recovery/positions/reply: "+msg);
+
+
+                nuevosDatosPosturas(msg, true);
+                ack.run();
+            } else if(sTopic.equals("/positions")){ // datos de cambios posturales
 
                 Utils.log(msg);
-                nuevosDatosPosturas(msg);
+                nuevosDatosPosturas(msg, false);
                 ack.run();
             } else if( sTopic.equals("/connect/reply")) { // conexion/desconexion
                 if(msg.equals("Connected"))
@@ -344,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            Topic[] topics = {new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/#", QoS.AT_LEAST_ONCE)};
+            Topic[] topics = {new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE)};
             getMqtt().subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                     Utils.log("Subscrito a mis topics");
