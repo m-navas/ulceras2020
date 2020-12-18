@@ -12,6 +12,8 @@ v1: encapsulamiento en formato JSON y publicación en /record_data/save/position
 
 v2:  publicación en topic /positions para aplicaciones externas
 
+v3: añadido marcador para poder visualizar mejor como evolucionan las publicaciones
+
 """
 
 import time
@@ -50,6 +52,8 @@ if __name__ == '__main__':
 
     last_time = int(round(time.time() * 1000))
     position_index = 0 #indice del array de labels que indica la postura que se publicara
+    
+    index = 0
 
     while True:
         current_time = int(round(time.time() * 1000))
@@ -70,4 +74,5 @@ if __name__ == '__main__':
         json_data = "{\"classes\":{\"S\":\"Supino\",\"LI\":\"Lateral izquierdo\",\"LD\":\"Lateral derecho\"},\"data\":[{\"t\":"+str(current_time)+", \"l\":\""+labels[position_index]+"\"},{\"t\":"+str(current_time + 1)+", \"l\":\""+labels[position_index]+"\"},{\"t\":"+str(current_time + 2)+", \"l\":\""+labels[position_index]+"\"}]}"
         publish.single("/record_data/save/positions", json_data, hostname=broker)
         publish.single("/positions", json_data, hostname=broker) # publicacion para aplicaciones externas
-        print("Publicado")
+        print("Publicado"+str(index))
+        index = (index + 1) % 10
