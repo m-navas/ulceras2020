@@ -4,9 +4,14 @@ Created on Wed Dec  2 10:44:08 2020
 
 @author: NAVAS
 
+MySQL-handler v2
+
 Script que se encarga de implementar servicios que interactuan con la base de datos MySQL
 para almacenar de forma persistente y posteriormente recuperar datos de lectura de sensores y
 datos posturales
+
+v2: se ha añadido la capacidad de diferenciar entre los distintos sensores a la hora de recuperar datos desde la BD
+
 
 """
 
@@ -115,7 +120,7 @@ def on_message(client, userdata, msg):
         print("Nuevos datos recibidos")
         save_sensors(data)
     elif msg.topic == "/record_data/recovery/sensors":
-        print("Solicitud de datos recibida")
+        print("Solicitud de datos de sensores recibida")
         recovery_sensors(data)
     elif msg.topic == "/record_data/save/positions":
         print("Nuevos datos de cambios de postura recibidos")
@@ -132,7 +137,7 @@ def on_log(mqttc, obj, level, string):
     print(string)
 
 
-def recovery_sensors(minutes):
+def recovery_sensors(data):
     """
     
     Consulta en la BD MySQL los datos de lecturas de sensores almacenados en los ultimos X minutos
@@ -148,11 +153,23 @@ def recovery_sensors(minutes):
     None.
 
     """
+    y = json.loads(data)
+    
+    sensor = y["sensor"]
+    minutes = y["minutes"]
+    print("Datos deserializados")
+    print("Sensor: "+sensor)
+    print("Minutos: "+str(minutes))
+
+    
     millis = int(round(time.time() * 1000)) #current
-    target_millis = int(minutes,10) * 60000 #millis dif
+    target_millis = minutes * 60000 #millis dif
     millis = millis - target_millis #target millis time
+    
+
 
     try:
+
         connection = mysql.connector.connect(host='localhost',
                                             database='ulceras_db',
                                             user='mnavas',
@@ -160,10 +177,13 @@ def recovery_sensors(minutes):
 
         mycursor = connection.cursor(buffered=True)
 
-        sql_select_query = """SELECT * FROM sensors_data WHERE timestamp >= %s"""
-        id = (millis,)
+        sql_select_query = """SELECT * FROM sensors_data WHERE timestamp >= %s AND sensor = %s"""
+        id = (millis,sensor)
+        
 
         mycursor.execute(sql_select_query, id)
+        
+
 
         myresult = mycursor.fetchall()
 
@@ -175,15 +195,14 @@ def recovery_sensors(minutes):
             sensordata = SensorData(x[0], x[1], x[2], x[3], x[4], x[5])
             items.append(sensordata)
 
-        #print(items)
-        json_data = str(items)
-        #print("-----")
-        #print(json_data)
 
-        mqtt_client.publish("/record_data/recovery/sensors/reply", json_data)
-        print("Mensaje publicado en /record_data/sensors/reply")
+        json_data = str(items)
+
+        mqtt_client.publish("/record_data/recovery/sensors/"+sensor+"/reply", json_data)
+        print("Mensaje publicado en /record_data/sensors/{sensor}/reply")
 
     except mysql.connector.Error as error:
+        print("error?")
         print("Failed to retrieve data from sensor_data table {}".format(error))
 
     finally:
@@ -208,9 +227,13 @@ def recovery_positions(minutes):
     None.
 
     """
+    print(minutes)
+    print(type(minutes))
     millis = int(round(time.time() * 1000)) #current
     target_millis = int(minutes,10) * 60000 #millis dif
     millis = millis - target_millis #target millis time
+    
+    print("hi")
 
     try:
         connection = mysql.connector.connect(host='localhost',
@@ -219,11 +242,17 @@ def recovery_positions(minutes):
                                             password='mnavas123')
 
         mycursor = connection.cursor(buffered=True)
+        
+        print("hi2")
 
         sql_select_query = """SELECT * FROM positions_data WHERE timestamp >= %s"""
         id = (millis,)
+        
+        print("hi3")
 
         mycursor.execute(sql_select_query, id)
+        
+        print("hi4")
 
         myresult = mycursor.fetchall()
 
@@ -250,6 +279,7 @@ def recovery_positions(minutes):
         if (connection.is_connected()):
             connection.close()
             print("MySQL connection is closed")
+
 
 
 
@@ -343,7 +373,6 @@ def save_positions(input_msg):
         if (connection.is_connected()):
             connection.close()
             print("MySQL connection is closed")
-
 
 
 if __name__=='__main__':
