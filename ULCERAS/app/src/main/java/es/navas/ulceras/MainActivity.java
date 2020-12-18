@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +41,6 @@ import es.navas.ulceras.Utilities.Vdata;
 public class MainActivity extends AppCompatActivity {
 
     Context mainContext;
-
 
     // --- BEGIN MQTT ---
     static public String BROKER="tcp://192.168.4.1:1883";
@@ -139,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         // Intentar conectar con sensores al inicio
         changeSensorsState();
 
@@ -170,11 +167,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        /*for (int i = registroGeneralPosturas.size() - 1; i > registroGeneralPosturas.size() - 6; i --){
-            Utils.log("Dato "+i+": "+registroGeneralPosturas.get(i).t);
-        }
-         */
-
         //Establecer el numero de posturas distintas (classes) si no se ha realizado en esta ejecución de la App
         if(registroGeneralClasses.isEmpty()){
             for (Map.Entry<String, String> entry : nuevoRegistro.getClasses().entrySet()) {
@@ -185,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
 
         if(cambiosPosturalesState)
             CambiosPosturales.drawChart(historic, data.size());
-
 
     }
     // --- END Posturas ---

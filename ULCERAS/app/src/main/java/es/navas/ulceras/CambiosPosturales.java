@@ -68,6 +68,7 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
 
     Integer time_interval = 30; // por defecto realizamos una consulta de 30 min
 
+    // UIHandler para ejecutar hilo de la UI en funciones static
     public static Handler UIHandler;
 
     static
@@ -82,7 +83,6 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cambios_posturales);
-
 
         cambiosPosturalesContext = this;
 
@@ -140,7 +140,6 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         // establecer labels y colores
         int i = 0;
         for (Map.Entry<String, String> entry : registroGeneralClasses.entrySet()) {
-            //System.out.println("clave=" + entry.getKey() + ", valor=" + entry.getValue());
             labelsColors.put(entry.getKey(), colorcodes[i]);
             i++; // i NO PUEDE SER MAYOR A colorcodes.size() !!
         }
@@ -266,7 +265,7 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         }
     }
 
-    //MQTT
+    // --- BEGIN MQTT ---
     private CallbackConnection getMqtt() {
 
         CallbackConnection callbackConnection;
@@ -376,5 +375,5 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         }
     }
 
-
+    // --- END MQTT ---
 }
