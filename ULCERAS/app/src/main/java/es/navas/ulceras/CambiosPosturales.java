@@ -98,7 +98,7 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
             steps[i] = 1; // largo de la barra, no tiene utilidad en este caso ya que cada "step" lo consideramos una unidad
         }
 
-        cambiosPosturalesState = true;
+
 
         chartPosturas.getDescription().setText("Cambios de postura");
 
@@ -143,6 +143,8 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
             labelsColors.put(entry.getKey(), colorcodes[i]);
             i++; // i NO PUEDE SER MAYOR A colorcodes.size() !!
         }
+
+        cambiosPosturalesState = true;
 
     }
 

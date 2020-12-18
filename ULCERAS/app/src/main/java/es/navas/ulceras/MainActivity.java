@@ -175,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if(cambiosPosturalesState)
-            CambiosPosturales.drawChart(historic, data.size());
+        //if(cambiosPosturalesState)
+        CambiosPosturales.drawChart(historic, data.size());
 
     }
     // --- END Posturas ---

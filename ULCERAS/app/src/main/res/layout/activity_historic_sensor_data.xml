@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SensorDataVisualization">
+
+    <TextView
+        android:id="@+id/tv_historic_sensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Sensor"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="@+id/chartAhist"
+        app:layout_constraintStart_toStartOf="@+id/chartAhist"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chartAhist"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_select_sensor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_historic_sensor" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chartBhist"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_select_sensor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_historic_sensor" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chartChist"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_select_sensor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_historic_sensor" />
+
+    <Spinner
+        android:id="@+id/spinner_historic_time_interval"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_load_history"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_select_sensor" />
+
+    <Spinner
+        android:id="@+id/spinner_select_sensor"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_historic_time_interval"
+        app:layout_constraintEnd_toStartOf="@+id/btn_select_sensor"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chartAhist" />
+
+    <Button
+        android:id="@+id/btn_load_history"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Cargar datos"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spinner_historic_time_interval"
+        app:layout_constraintTop_toBottomOf="@+id/btn_select_sensor" />
+
+    <Button
+        android:id="@+id/btn_select_sensor"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Seleccionar sensor"
+        app:layout_constraintBottom_toTopOf="@+id/btn_load_history"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spinner_select_sensor"
+        app:layout_constraintTop_toBottomOf="@+id/chartAhist" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

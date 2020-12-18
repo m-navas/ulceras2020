@@ -14,11 +14,12 @@ import android.widget.Button;
         - Datos de lectura de los sensores en RT
         - Datos de cambios posturales en RT y carga de datos historicos
         - Datos de alertas
+        - Datos historicos de los sensores
  */
 public class VisualizationDialog extends Dialog implements View.OnClickListener {
 
     public Activity context;
-    private Button btn_sensorsData, btn_positions, btn_alerts;
+    private Button btn_sensorsData, btn_positions, btn_alerts, btn_historic;
 
 
     public VisualizationDialog(Activity a) {
@@ -37,6 +38,7 @@ public class VisualizationDialog extends Dialog implements View.OnClickListener 
         btn_sensorsData = findViewById(R.id.btn_sensors_data);
         btn_positions = findViewById(R.id.btn_position);
         btn_alerts = findViewById(R.id.btn_alerts);
+        btn_historic = findViewById(R.id.btn_historic_sensor_data);
 
         btn_sensorsData.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +61,14 @@ public class VisualizationDialog extends Dialog implements View.OnClickListener 
             public void onClick(View v) {
                 //Intent i = new Intent(context, SensorDataVisualization.class);
                 //context.startActivity(i);
+            }
+        });
+
+        btn_historic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, HistoricSensorData.class);
+                context.startActivity(i);
             }
         });
     }
