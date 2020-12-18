@@ -71,11 +71,16 @@ public class MainActivity extends AppCompatActivity {
     public static SensorData chartBData, chartCData, chartAData;
     // --- END SensorData Chart Parameters ---
 
+    // --- BEGIN SensorData Hist Parameters ---
+    public static int indexBhist, indexChist, indexAhist, indexHist;
+    public static SensorData chartBDataHist, chartCDataHist, chartADataHist, chartDataHist;
+    // --- END SensorData Hist Parameters ---
+
     private ImageView btn_connection, btn_chart, btn_visualization, btn_help, btn_history;
     private TextView tv_connection;
 
     VisualizationDialog visualizationDialog;
-    private ArrayList<Sensor> myDevices = new ArrayList<>();
+    private ArrayList<String> mySensors = new ArrayList<>();
 
     // --- BEGIN Sensors connection state ---
     private boolean connected;
@@ -100,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new AsynSub()).start(); // Subscription to topics
         visualizationDialog = new VisualizationDialog(this); // Inicializar cuadro de dialogo con el context del MainActivity
 
-        myDevices.add(new Sensor("Vibration_sensor_1")); // name: nombre que le hemos asignado al sensor en el script Python, NO COINCIDE con nombre de la entidad del sensor en HomeAssistant
-        myDevices.add(new Sensor("Vibration_sensor_2"));
-        myDevices.add(new Sensor("Vibration_sensor_3"));
+        mySensors.add("Vibration_sensor_1"); // name: nombre que le hemos asignado al sensor en el script Python, NO COINCIDE con nombre de la entidad del sensor en HomeAssistant
+        mySensors.add("Vibration_sensor_2");
+        mySensors.add("Vibration_sensor_3");
 
         // SensorData parameters init
         sensorDataInit();
@@ -204,6 +209,18 @@ public class MainActivity extends AppCompatActivity {
         indexB = 0;
         indexC = 0;
         indexA = 0;
+
+        // Datos historicos
+        chartBDataHist = new SensorData();
+        chartCDataHist = new SensorData();
+        chartADataHist = new SensorData();
+
+        indexBhist = 0;
+        indexChist = 0;
+        indexAhist = 0;
+
+        chartDataHist = new SensorData();
+        indexHist = 0;
     }
 
     // --- END SensorData ---
@@ -235,7 +252,55 @@ public class MainActivity extends AppCompatActivity {
 
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
 
-            if(sTopic.equals("/record_data/recovery/positions/reply")){ // recuperacion de datos de cambios posturales desde la BD
+            if(sTopic.contains("/record_data/recovery/sensors/")){ // recuperacion de datos de sensores desde la BD
+                Utils.log(msg);
+                // Deserializamos
+                Gson gson = new Gson();
+                Sensor[] datos = gson.fromJson(msg, Sensor[].class);
+
+                Utils.log("num datos: "+datos.length);
+
+                if(datos[0].getSensorName().equals("Vibration_sensor_1")){
+                    Utils.log("Cargando datos de sensor 1");
+                    chartDataHist.clear();
+                    indexHist = 0;
+                    for(Sensor d: datos){
+                        // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                        chartDataHist.add(indexHist, d.getX(), d.getY(), d.getZ());
+                        indexHist++;
+
+                    }
+                    // Actualizamos grafico
+                    HistoricSensorData.setDataChartHist();
+                }else if(datos[0].getSensorName().equals("Vibration_sensor_2")){
+                    Utils.log("Cargando datos de sensor 2");
+                    chartDataHist.clear();
+                    indexHist = 0;
+                    for(Sensor d: datos){
+                        // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                        chartDataHist.add(indexHist, d.getX(), d.getY(), d.getZ());
+                        indexHist++;
+
+
+                    }
+                    // Actualizamos grafico
+                    HistoricSensorData.setDataChartHist();
+                }else if(datos[0].getSensorName().equals("Vibration_sensor_3")){
+                    Utils.log("Cargando datos de sensor 3");
+                    chartDataHist.clear();
+                    indexHist = 0;
+                    for(Sensor d: datos){
+                        // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
+                        chartDataHist.add(indexHist, d.getX(), d.getY(), d.getZ());
+                        indexHist++;
+
+
+                    }
+                    // Actualizamos grafico
+                    HistoricSensorData.setDataChartHist();
+                }
+
+            }else if(sTopic.equals("/record_data/recovery/positions/reply")){ // recuperacion de datos de cambios posturales desde la BD
                 Utils.log("Mensaje MQTT recibido de /record_data/recovery/positions/reply: "+msg);
 
 
@@ -258,12 +323,15 @@ public class MainActivity extends AppCompatActivity {
                 Utils.log("Test MQTT " + msg);
 
             }else{ // SensorData en tiempo real
+                //Utils.log("Hello?");
+                //Utils.log(sTopic);
+                //Utils.log(mySensors.get(0));
 
                 // Deserializamos
                 Gson gson = new Gson();
                 Vdata dato = gson.fromJson(msg, Vdata.class);
 
-                if (sTopic.contains(myDevices.get(0).getName())) { // Sensor 1
+                if (sTopic.contains(mySensors.get(0))) { // Sensor 1
                     Utils.log("Nuevos datos Sensor 1");
 
                     // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
@@ -279,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
                     // Actualizamos grafico
                     SensorDataVisualization.setDataChartA();
 
-                } else if (sTopic.contains(myDevices.get(1).getName())) { // Sensor 2
+                } else if (sTopic.contains(mySensors.get(1))) { // Sensor 2
 
                     Utils.log("Nuevos datos Sensor 2");
 
@@ -296,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                     // Actualizamos grafico
                     SensorDataVisualization.setDataChartB();
 
-                } else if (sTopic.contains(myDevices.get(2).getName())){ // Sensor 3
+                } else if (sTopic.contains(mySensors.get(2))){ // Sensor 3
                     Utils.log("Nuevos datos Sensor 3");
 
                     // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
@@ -342,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            Topic[] topics = {new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE)};
+            Topic[] topics = {new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/sensors/#", QoS.AT_LEAST_ONCE)};
             getMqtt().subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                     Utils.log("Subscrito a mis topics");

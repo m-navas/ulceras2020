@@ -28,29 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_historic_sensor" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartBhist"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/spinner_select_sensor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_historic_sensor" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartChist"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/spinner_select_sensor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_historic_sensor" />
 
     <Spinner
         android:id="@+id/spinner_historic_time_interval"

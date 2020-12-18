@@ -29,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@+id/chartB" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/tv_sensor2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center|top"
