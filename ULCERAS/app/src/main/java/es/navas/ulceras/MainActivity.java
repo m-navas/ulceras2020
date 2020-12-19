@@ -1,8 +1,15 @@
 package es.navas.ulceras;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +49,7 @@ import static es.navas.ulceras.SensorDataVisualization.draw;
 
 public class MainActivity extends AppCompatActivity {
 
-    Context mainContext;
+    static Context mainContext;
 
     // --- BEGIN MQTT ---
     static public String BROKER="tcp://192.168.4.1:1883";
@@ -94,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
     //public static boolean cambiosPosturalesState = false;
     // --- END Posturas ---
 
+    // --- BEGIN Notifications ---
+    private static final String CHANNEL_ID = "my-channel-id";
+    // --- END Notifications ---
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
             registroGeneralPosturas.add(new RegistroPosturas.Posturas(0L, "None"));
 
         registroGeneralClasses = new HashMap<>();
+
+        createNotificationChannel();
 
         Utils.log("Setup done, Hello world!");
 
@@ -149,6 +162,48 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // --- BEGIN Notifications ---
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "MI_CANAL";
+            String description = "Canal de notificaciones de alertas";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private static void notify(String msg){
+        // Establecer la accion de toque de la notificación
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(mainContext, HistoricSensorData.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mainContext, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mainContext, CHANNEL_ID)
+                .setSmallIcon(R.drawable.alert_icon)
+                .setContentTitle("Alerta")
+                .setContentText(msg)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        // Mostrar la notificacion
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mainContext);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(1, builder.build());
+
+
+    }
+    // --- END Notifications ---
     // --- BEGIN Posturas ---
     // Añade los nuevos datos recibidos al array de datos que representaremos en el gráfico
     private void newPositionsData(String json, boolean historic){
@@ -313,9 +368,10 @@ public class MainActivity extends AppCompatActivity {
 
                 updateConnectionUI();
 
-            }else if (sTopic.equals("/test")) { // ALERTAS
-                Utils.log("Test MQTT " + msg);
-
+            }else if (sTopic.equals("/notification")) { // NOTIFICACIONES
+                // Mostrar notificación
+                Utils.log("Notificacion! "+msg);
+                MainActivity.notify(msg);
             }else{ // DATOS DE SENSORES EN RT
                 // Deserializamos
                 Gson gson = new Gson();
@@ -403,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            Topic[] topics = {new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/sensors/#", QoS.AT_LEAST_ONCE)};
+            Topic[] topics = {new Topic("/notification", QoS.AT_LEAST_ONCE), new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/sensors/#", QoS.AT_LEAST_ONCE)};
             getMqtt().subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                     Utils.log("Subscrito a mis topics");
