@@ -37,6 +37,8 @@ import es.navas.ulceras.Utilities.SensorData;
 import es.navas.ulceras.Utilities.Utils;
 import es.navas.ulceras.Utilities.Vdata;
 
+import static es.navas.ulceras.SensorDataVisualization.draw;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -345,7 +347,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // Actualizamos grafico
-                    SensorDataVisualization.setDataChartA();
+                    if(draw)
+                        SensorDataVisualization.setDataChartA();
 
                 } else if (sTopic.contains(mySensors.get(1))) { // Sensor 2
 
@@ -362,7 +365,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // Actualizamos grafico
-                    SensorDataVisualization.setDataChartB();
+                    if(draw)
+                        SensorDataVisualization.setDataChartB();
 
                 } else if (sTopic.contains(mySensors.get(2))){ // Sensor 3
                     Utils.log("Nuevos datos Sensor 3");
@@ -378,7 +382,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // Actualizamos grafico
-                    SensorDataVisualization.setDataChartC();
+                    if(draw)
+                        SensorDataVisualization.setDataChartC();
                 }
             }
 

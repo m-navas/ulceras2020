@@ -23,7 +23,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+
 
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
@@ -246,26 +246,6 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         return;
     }
 
-    private static class MyValueFormatter extends ValueFormatter
-    {
-
-        public MyValueFormatter() {
-
-        }
-
-        @Override
-        public String getFormattedValue(float value) {
-            switch ((int)value){
-                case 200:
-                    return "Ahora";
-                case 100:
-                    return "-10 s";
-                case 0:
-                    return "-20 s";
-            }
-            return "";
-        }
-    }
 
     // --- BEGIN MQTT ---
     private CallbackConnection getMqtt() {

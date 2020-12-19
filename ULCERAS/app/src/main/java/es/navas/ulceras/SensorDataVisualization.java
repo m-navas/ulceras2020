@@ -9,6 +9,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import es.navas.ulceras.Utilities.Utils;
+
 import static es.navas.ulceras.MainActivity.chartBData;
 import static es.navas.ulceras.MainActivity.chartCData;
 import static es.navas.ulceras.MainActivity.chartAData;
@@ -19,6 +21,8 @@ import static es.navas.ulceras.MainActivity.indexA;
 public class SensorDataVisualization extends AppCompatActivity {
 
     private static LineChart chartB, chartC, chartA;
+
+    static boolean draw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,8 @@ public class SensorDataVisualization extends AppCompatActivity {
         chartC.setScaleEnabled(true);
         chartA.setScaleEnabled(true);
 
+        draw = true;
+
 
         if(chartAData.getSize() > 0)
             setDataChartA();
@@ -49,11 +55,13 @@ public class SensorDataVisualization extends AppCompatActivity {
 
         if(chartCData.getSize() > 0)
             setDataChartC();
+
+
     }
 
 
     public static void setDataChartB(){
-
+        draw = false;
 
         LineDataSet setX, setY, setZ;
 
@@ -80,10 +88,15 @@ public class SensorDataVisualization extends AppCompatActivity {
             chartB.clear();
         }
 
-
+        draw = true;
     }
 
     public static void setDataChartC(){
+
+        /*while (!draw){
+            Utils.log("Waiting in A");
+        }*/
+        draw = false;
 
         LineDataSet setX, setY, setZ;
 
@@ -110,9 +123,19 @@ public class SensorDataVisualization extends AppCompatActivity {
             chartC.clear();
         }
 
+        draw = true;
+
     }
 
     public static void setDataChartA(){
+
+        /*while (!draw){
+            Utils.log("Waiting in A");
+        }
+
+         */
+
+        draw = false;
 
         LineDataSet setX, setY, setZ;
 
@@ -140,6 +163,8 @@ public class SensorDataVisualization extends AppCompatActivity {
             chartAData.clear();
             chartA.clear();
         }
+
+        draw = true;
 
     }
 
