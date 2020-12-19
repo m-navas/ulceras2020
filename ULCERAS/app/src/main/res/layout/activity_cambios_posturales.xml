@@ -19,6 +19,7 @@
 
     <Button
         android:id="@+id/btn_load_history_data"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="43dp"
         android:text="Cargar datos"

@@ -13,12 +13,12 @@
         android:gravity="center"
         android:text="Sensor"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="@+id/chartAhist"
-        app:layout_constraintStart_toStartOf="@+id/chartAhist"
+        app:layout_constraintEnd_toEndOf="@+id/chartHist"
+        app:layout_constraintStart_toStartOf="@+id/chartHist"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartAhist"
+        android:id="@+id/chartHist"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_select_sensor"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chartAhist" />
+        app:layout_constraintTop_toBottomOf="@+id/chartHist" />
 
     <Button
         android:id="@+id/btn_load_history"
@@ -72,6 +72,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/spinner_select_sensor"
-        app:layout_constraintTop_toBottomOf="@+id/chartAhist" />
+        app:layout_constraintTop_toBottomOf="@+id/chartHist" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

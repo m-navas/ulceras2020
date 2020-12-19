@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
     // --- END SensorData Chart Parameters ---
 
     // --- BEGIN SensorData Hist Parameters ---
-    public static int indexBhist, indexChist, indexAhist, indexHist;
-    public static SensorData chartBDataHist, chartCDataHist, chartADataHist, chartDataHist;
+    public static int indexHist;
+    public static SensorData chartDataHist;
     // --- END SensorData Hist Parameters ---
 
-    private ImageView btn_connection, btn_chart, btn_visualization, btn_help, btn_history;
+    private ImageView btn_connection, btn_visualization;
     private TextView tv_connection;
 
     VisualizationDialog visualizationDialog;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     // --- BEGIN Posturas ---
     public static ArrayList<RegistroPosturas.Posturas> registroGeneralPosturas; // Array FIFO donde almacenamos los nuevos datos de posturas
     public static HashMap<String, String> registroGeneralClasses; // Estructura que contiene las distintas clases (posturas) que manejamos, se cambia dinamicamente en cada ejecucion de la App
-    public static boolean cambiosPosturalesState = false;
+    //public static boolean cambiosPosturalesState = false;
     // --- END Posturas ---
 
     @Override
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     // --- BEGIN Posturas ---
     // Añade los nuevos datos recibidos al array de datos que representaremos en el gráfico
-    private void nuevosDatosPosturas(String json, boolean historic){
+    private void newPositionsData(String json, boolean historic){
         Gson gson = new Gson();
 
         // Deserialización
@@ -213,14 +213,6 @@ public class MainActivity extends AppCompatActivity {
         indexA = 0;
 
         // Datos historicos
-        chartBDataHist = new SensorData();
-        chartCDataHist = new SensorData();
-        chartADataHist = new SensorData();
-
-        indexBhist = 0;
-        indexChist = 0;
-        indexAhist = 0;
-
         chartDataHist = new SensorData();
         indexHist = 0;
     }
@@ -254,8 +246,8 @@ public class MainActivity extends AppCompatActivity {
 
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
 
-            if(sTopic.contains("/record_data/recovery/sensors/")){ // recuperacion de datos de sensores desde la BD
-                Utils.log(msg);
+            if(sTopic.contains("/record_data/recovery/sensors/")){ // DATOS DE SENSORES DESDE BD
+                //Utils.log(msg);
                 // Deserializamos
                 Gson gson = new Gson();
                 Sensor[] datos = gson.fromJson(msg, Sensor[].class);
@@ -266,54 +258,54 @@ public class MainActivity extends AppCompatActivity {
                     Utils.log("Cargando datos de sensor 1");
                     chartDataHist.clear();
                     indexHist = 0;
+
                     for(Sensor d: datos){
                         // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
                         chartDataHist.add(indexHist, d.getX(), d.getY(), d.getZ());
                         indexHist++;
-
                     }
+
                     // Actualizamos grafico
                     HistoricSensorData.setDataChartHist();
                 }else if(datos[0].getSensorName().equals("Vibration_sensor_2")){
-                    Utils.log("Cargando datos de sensor 2");
+                    Utils.log("Cargando datos historicos de sensor 2");
                     chartDataHist.clear();
                     indexHist = 0;
+
                     for(Sensor d: datos){
                         // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
                         chartDataHist.add(indexHist, d.getX(), d.getY(), d.getZ());
                         indexHist++;
-
-
                     }
+
                     // Actualizamos grafico
                     HistoricSensorData.setDataChartHist();
                 }else if(datos[0].getSensorName().equals("Vibration_sensor_3")){
-                    Utils.log("Cargando datos de sensor 3");
+                    Utils.log("Cargando datos historicos de sensor 3");
                     chartDataHist.clear();
                     indexHist = 0;
+
                     for(Sensor d: datos){
                         // Añadimos dato al objeto chartData que contiene los datos que se dibujarán en el grafico
                         chartDataHist.add(indexHist, d.getX(), d.getY(), d.getZ());
                         indexHist++;
-
-
                     }
+
                     // Actualizamos grafico
                     HistoricSensorData.setDataChartHist();
                 }
 
-            }else if(sTopic.equals("/record_data/recovery/positions/reply")){ // recuperacion de datos de cambios posturales desde la BD
-                Utils.log("Mensaje MQTT recibido de /record_data/recovery/positions/reply: "+msg);
+            }else if(sTopic.equals("/record_data/recovery/positions/reply")){ // DATOS DE CAMBIOS POSTURALES DESDE BD
+                //Utils.log("Mensaje MQTT recibido de /record_data/recovery/positions/reply: "+msg);
 
-
-                nuevosDatosPosturas(msg, true);
+                newPositionsData(msg, true);
                 ack.run();
-            } else if(sTopic.equals("/positions")){ // datos de cambios posturales
+            } else if(sTopic.equals("/positions")){ // DATOS DE CAMBIOS POSTURALES EN RT
 
                 Utils.log(msg);
-                nuevosDatosPosturas(msg, false);
+                newPositionsData(msg, false);
                 ack.run();
-            } else if( sTopic.equals("/connect/reply")) { // conexion/desconexion
+            } else if( sTopic.equals("/connect/reply")) { // CONEXION/DESCONEXION RESPUESTA
                 if(msg.equals("Connected"))
                     connected = true;
                 else if (msg.equals("Disconnected"))
@@ -321,14 +313,10 @@ public class MainActivity extends AppCompatActivity {
 
                 updateConnectionUI();
 
-            }else if (sTopic.equals("/test")) {
+            }else if (sTopic.equals("/test")) { // ALERTAS
                 Utils.log("Test MQTT " + msg);
 
-            }else{ // SensorData en tiempo real
-                //Utils.log("Hello?");
-                //Utils.log(sTopic);
-                //Utils.log(mySensors.get(0));
-
+            }else{ // DATOS DE SENSORES EN RT
                 // Deserializamos
                 Gson gson = new Gson();
                 Vdata dato = gson.fromJson(msg, Vdata.class);

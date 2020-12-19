@@ -9,8 +9,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
-import es.navas.ulceras.Utilities.Utils;
-
 import static es.navas.ulceras.MainActivity.chartBData;
 import static es.navas.ulceras.MainActivity.chartCData;
 import static es.navas.ulceras.MainActivity.chartAData;
@@ -22,7 +20,7 @@ public class SensorDataVisualization extends AppCompatActivity {
 
     private static LineChart chartB, chartC, chartA;
 
-    static boolean draw;
+    static boolean draw; // Variable que actua a modo de semaforo para que no existan conflictos en la librería MPAndroidChart a la hora de crear los gráficos
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +59,7 @@ public class SensorDataVisualization extends AppCompatActivity {
 
 
     public static void setDataChartB(){
-        draw = false;
+        draw = false; // impide que se intente dibujar otro gráfico hasta que se complete este
 
         LineDataSet setX, setY, setZ;
 
@@ -93,10 +91,7 @@ public class SensorDataVisualization extends AppCompatActivity {
 
     public static void setDataChartC(){
 
-        /*while (!draw){
-            Utils.log("Waiting in A");
-        }*/
-        draw = false;
+        draw = false; // impide que se intente dibujar otro gráfico hasta que se complete este
 
         LineDataSet setX, setY, setZ;
 
@@ -129,13 +124,7 @@ public class SensorDataVisualization extends AppCompatActivity {
 
     public static void setDataChartA(){
 
-        /*while (!draw){
-            Utils.log("Waiting in A");
-        }
-
-         */
-
-        draw = false;
+        draw = false; // impide que se intente dibujar otro gráfico hasta que se complete este
 
         LineDataSet setX, setY, setZ;
 

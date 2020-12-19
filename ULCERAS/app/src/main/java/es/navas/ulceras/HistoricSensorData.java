@@ -29,19 +29,9 @@ import java.util.ArrayList;
 
 import es.navas.ulceras.Utilities.Utils;
 
-import static es.navas.ulceras.MainActivity.chartAData;
-import static es.navas.ulceras.MainActivity.chartADataHist;
-import static es.navas.ulceras.MainActivity.chartBData;
-import static es.navas.ulceras.MainActivity.chartBDataHist;
-import static es.navas.ulceras.MainActivity.chartCData;
-import static es.navas.ulceras.MainActivity.chartCDataHist;
+
 import static es.navas.ulceras.MainActivity.chartDataHist;
-import static es.navas.ulceras.MainActivity.indexA;
-import static es.navas.ulceras.MainActivity.indexAhist;
-import static es.navas.ulceras.MainActivity.indexB;
-import static es.navas.ulceras.MainActivity.indexBhist;
-import static es.navas.ulceras.MainActivity.indexC;
-import static es.navas.ulceras.MainActivity.indexChist;
+
 import static es.navas.ulceras.MainActivity.indexHist;
 
 public class HistoricSensorData extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
@@ -68,29 +58,18 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
 
         tv_sensor.setText("Sensor 1");
 
-        //chartB = (LineChart)findViewById(R.id.chartBhist);
-        //chartC = (LineChart)findViewById(R.id.chartChist);
-        chartA = (LineChart)findViewById(R.id.chartAhist);
+        chartA = (LineChart)findViewById(R.id.chartHist);
 
-        //chartB.setDragEnabled(true);
-        //chartC.setDragEnabled(true);
         chartA.setDragEnabled(true);
 
-
-        //chartB.setScaleEnabled(true);
-        //chartC.setScaleEnabled(true);
         chartA.setScaleEnabled(true);
 
 
-        if(chartAData.getSize() > 0)
-            setDataChartAHist();
+        if(chartDataHist.getSize() > 0){
+            setDataChartHist();
+        }
 
-        if(chartBData.getSize() > 0)
-            setDataChartBhist();
-
-        if(chartCData.getSize() > 0)
-            setDataChartCHist();
-
+        // Spinners
         Integer time_intervals[] = {30, 120, 240}; // 30 min, 2 h y 4 h
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, time_intervals);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -103,6 +82,7 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
         spinner_select_sensor.setAdapter(sensorsAdapter);
         spinner_select_sensor.setOnItemSelectedListener(this);
 
+        // Buttons
         btn_load_data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,12 +106,6 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
         btn_select_sensor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*chartDataHist.clear();
-                indexHist = 0;
-                updateUI();
-                setDataChartHist();
-
-                 */
                 String sensorName = "Vibration_sensor_1";
                 switch (selectedSensor){
                     case 1:
@@ -144,6 +118,7 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
                         sensorName = "Vibration_sensor_3";
                         break;
                 }
+
                 String msg = "{ \"sensor\":\""+ sensorName +"\", \"minutes\":"+ time_interval+"}";
                 new Thread(new AsynPub(getMqtt(), "/record_data/recovery/sensors", msg)).start();
 
@@ -168,36 +143,6 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
 
     }
 
-    public static void drawChart() {
-        Utils.log("drawChart sensor "+selectedSensor);
-        switch (selectedSensor){
-            case 1:
-                /*chartA.setVisibility(View.VISIBLE);
-                chartB.setVisibility(View.GONE);
-                chartC.setVisibility(View.GONE);
-
-                 */
-                setDataChartAHist();
-                break;
-            case 2:
-                /*chartB.setVisibility(View.VISIBLE);
-                chartA.setVisibility(View.GONE);
-                chartC.setVisibility(View.GONE);
-
-                 */
-                setDataChartBhist();
-                break;
-            case 3:
-                /*chartC.setVisibility(View.VISIBLE);
-                chartB.setVisibility(View.GONE);
-                chartA.setVisibility(View.GONE);
-
-                 */
-                setDataChartCHist();
-                break;
-        }
-
-    }
 
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
@@ -237,105 +182,6 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
 
     }
 
-    public static void setDataChartAHist(){
-        Utils.log("Num elements A hist: "+chartADataHist.xData.size());
-        resetChart();
-        LineDataSet setX, setY, setZ;
-
-        setX = new LineDataSet(chartADataHist.xData, "X");
-        setX.setColor(Color.RED);
-        setY = new LineDataSet(chartADataHist.yData, "Y");
-        setY.setColor(Color.BLUE);
-        setZ = new LineDataSet(chartADataHist.zData, "Z");
-        setZ.setColor(Color.GREEN);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(setX); // add the data sets
-        dataSets.add(setY); // add the data sets
-        dataSets.add(setZ); // add the data sets
-
-        LineData data = new LineData(dataSets);
-
-
-        chartA.setData(data);
-
-        chartA.setVisibleXRangeMaximum(5);
-
-        chartA.invalidate();
-
-        if(indexAhist == Integer.MAX_VALUE){
-            indexAhist = 0;
-            chartADataHist.clear();
-            chartA.clear();
-        }
-
-    }
-
-    public static void setDataChartBhist(){
-        Utils.log("Num elements B hist: "+chartBDataHist.xData.size());
-        resetChart();
-        LineDataSet setX, setY, setZ;
-
-        setX = new LineDataSet(chartBDataHist.xData, "X");
-        setX.setColor(Color.RED);
-        setY = new LineDataSet(chartBDataHist.yData, "Y");
-        setY.setColor(Color.BLUE);
-        setZ = new LineDataSet(chartBDataHist.zData, "Z");
-        setZ.setColor(Color.GREEN);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(setX); // add the data sets
-        dataSets.add(setY); // add the data sets
-        dataSets.add(setZ); // add the data sets
-
-        LineData data = new LineData(dataSets);
-
-        chartA.setData(data);
-
-        chartA.setVisibleXRangeMaximum(5);
-        chartA.invalidate();
-
-        if(indexBhist == Integer.MAX_VALUE){
-            indexBhist = 0;
-            chartBDataHist.clear();
-            chartA.clear();
-        }
-
-
-    }
-
-    public static void setDataChartCHist(){
-        Utils.log("Num elements C hist: "+chartCDataHist.xData.size());
-        resetChart();
-        LineDataSet setX, setY, setZ;
-
-        setX = new LineDataSet(chartCDataHist.xData, "X");
-        setX.setColor(Color.RED);
-        setY = new LineDataSet(chartCDataHist.yData, "Y");
-        setY.setColor(Color.BLUE);
-        setZ = new LineDataSet(chartCDataHist.zData, "Z");
-        setZ.setColor(Color.GREEN);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(setX); // add the data sets
-        dataSets.add(setY); // add the data sets
-        dataSets.add(setZ); // add the data sets
-
-        LineData data = new LineData(dataSets);
-
-        chartA.setData(data);
-
-        chartA.setVisibleXRangeMaximum(5);
-
-        chartA.invalidate();
-
-        if(indexChist == Integer.MAX_VALUE){
-            indexChist = 0;
-            chartCDataHist.clear();
-            chartA.clear();
-        }
-
-    }
 
     private void updateUI() {
 

@@ -43,7 +43,6 @@ import es.navas.ulceras.Utilities.Utils;
 
 import static es.navas.ulceras.MainActivity.registroGeneralClasses;
 import static es.navas.ulceras.MainActivity.registroGeneralPosturas;
-import static es.navas.ulceras.MainActivity.cambiosPosturalesState;
 
 
 public class CambiosPosturales extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -144,7 +143,7 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
             i++; // i NO PUEDE SER MAYOR A colorcodes.size() !!
         }
 
-        cambiosPosturalesState = true;
+        //cambiosPosturalesState = true;
 
     }
 
