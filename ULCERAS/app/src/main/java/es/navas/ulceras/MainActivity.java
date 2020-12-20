@@ -38,6 +38,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import es.navas.ulceras.Utilities.Alert;
 import es.navas.ulceras.Utilities.RegistroPosturas;
 import es.navas.ulceras.Utilities.Sensor;
 import es.navas.ulceras.Utilities.SensorData;
@@ -101,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
     //public static boolean cambiosPosturalesState = false;
     // --- END Posturas ---
 
+    // --- BEGIN Alertas ---
+    public static ArrayList<Alert.AlertData> registroGeneralAlertas; // Array FIFO donde almacenamos los nuevos datos de alertas
+    public static HashMap<String, String> registroGeneralClassesAlertas; // Estructura que contiene las distintas clases (identificadores/posturas) que manejamos, se cambia dinamicamente en cada ejecucion de la App
+    // --- END Alertas ---
+
     // --- BEGIN Notifications ---
     private static final String CHANNEL_ID = "my-channel-id";
     // --- END Notifications ---
@@ -133,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
         registroGeneralClasses = new HashMap<>();
 
         createNotificationChannel();
+
+        //Alertas
+        registroGeneralAlertas = new ArrayList<>();
+        registroGeneralClassesAlertas = new HashMap<>();
 
         Utils.log("Setup done, Hello world!");
 
@@ -179,10 +189,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+        Gestiona los mensajes de alerta recibidos por MQTT en el topic /notification
+     */
     private static void notify(String msg){
         // Establecer la accion de toque de la notificación
         // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(mainContext, HistoricSensorData.class);
+        Intent intent = new Intent(mainContext, AlertsChart.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(mainContext, 0, intent, 0);
 
@@ -204,8 +217,51 @@ public class MainActivity extends AppCompatActivity {
 
     }
     // --- END Notifications ---
+
+    // --- BEGIN ALERTS
+    private void newAlertData(String json){
+        Gson gson = new Gson();
+
+        // Deserialización
+        Type type = new TypeToken<Alert>(){}.getType();
+        Alert nuevoRegistro = gson.fromJson(json, type);
+
+
+
+        // Sustrae los datos
+        Alert.AlertData data = nuevoRegistro.getData();
+
+        if(data.getS() >= 95 || data.getLI() >= 95 || data.getLD() >= 95){
+            notify("Nivel de alerta maximo superado");
+        }
+
+        // Añadimos los nuevos datos al registro
+        registroGeneralAlertas.add(data);
+
+
+        if(registroGeneralAlertas.size() > 100){
+            registroGeneralAlertas.remove(0);
+        }
+
+
+        //Establecer el numero de posturas distintas (classes) si no se ha realizado en esta ejecución de la App
+        if(registroGeneralClassesAlertas.isEmpty()){
+            for (Map.Entry<String, String> entry : nuevoRegistro.getClasses().entrySet()) {
+                Utils.log("clave=" + entry.getKey() + ", valor=" + entry.getValue());
+                registroGeneralClassesAlertas.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        //if(cambiosPosturalesState)
+        AlertsChart.drawChart();
+
+    }
+    // --- END ALERTS
+
     // --- BEGIN Posturas ---
-    // Añade los nuevos datos recibidos al array de datos que representaremos en el gráfico
+    /*
+        Añade los nuevos datos recibidos al array de datos que representaremos en el gráfico de cambios posturales
+    */
     private void newPositionsData(String json, boolean historic){
         Gson gson = new Gson();
 
@@ -245,6 +301,9 @@ public class MainActivity extends AppCompatActivity {
 
     // --- BEGIN Conexion/Desconexion ---
 
+    /*
+        Envia el mensaje MQTT para cambiar el estado de los sensores (conectados o desconectados)
+     */
     private void changeSensorsState(){
         String msg;
         if(connected)
@@ -258,6 +317,9 @@ public class MainActivity extends AppCompatActivity {
     // --- END Conexion/Desconexion
 
     // --- BEGIN SensorData ---
+    /*
+        Inicialización de las variables que se utilizan para almacenar los datos recibidos de los sensores, que se representarán en los gráficos
+     */
     private void sensorDataInit(){
         chartBData = new SensorData();
         chartCData = new SensorData();
@@ -301,7 +363,10 @@ public class MainActivity extends AppCompatActivity {
 
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
 
-            if(sTopic.contains("/record_data/recovery/sensors/")){ // DATOS DE SENSORES DESDE BD
+            if(sTopic.equals("/alert")){
+                Utils.log("Datos de alerta recibidos: "+msg);
+                newAlertData(msg);
+            }else if(sTopic.contains("/record_data/recovery/sensors/")){ // DATOS DE SENSORES DESDE BD
                 //Utils.log(msg);
                 // Deserializamos
                 Gson gson = new Gson();
@@ -459,7 +524,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            Topic[] topics = {new Topic("/notification", QoS.AT_LEAST_ONCE), new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/sensors/#", QoS.AT_LEAST_ONCE)};
+            Topic[] topics = {new Topic("/alert", QoS.AT_LEAST_ONCE), new Topic("/notification", QoS.AT_LEAST_ONCE), new Topic("/positions", QoS.AT_LEAST_ONCE), new Topic("/case/inertial/#", QoS.AT_LEAST_ONCE), new Topic("/connect/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/positions/reply", QoS.AT_LEAST_ONCE), new Topic("/record_data/recovery/sensors/#", QoS.AT_LEAST_ONCE)};
             getMqtt().subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                     Utils.log("Subscrito a mis topics");

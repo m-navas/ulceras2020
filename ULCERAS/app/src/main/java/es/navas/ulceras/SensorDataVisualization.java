@@ -57,7 +57,9 @@ public class SensorDataVisualization extends AppCompatActivity {
 
     }
 
-
+    /*
+        Genera el gráfico correspondiente al sensor 1 con sus datos existentes
+     */
     public static void setDataChartB(){
         draw = false; // impide que se intente dibujar otro gráfico hasta que se complete este
 
@@ -89,6 +91,9 @@ public class SensorDataVisualization extends AppCompatActivity {
         draw = true;
     }
 
+    /*
+        Genera el gráfico correspondiente al sensor 2 con sus datos existentes
+     */
     public static void setDataChartC(){
 
         draw = false; // impide que se intente dibujar otro gráfico hasta que se complete este
@@ -122,6 +127,9 @@ public class SensorDataVisualization extends AppCompatActivity {
 
     }
 
+    /*
+        Genera el gráfico correspondiente al sensor 3 con sus datos existentes
+     */
     public static void setDataChartA(){
 
         draw = false; // impide que se intente dibujar otro gráfico hasta que se complete este

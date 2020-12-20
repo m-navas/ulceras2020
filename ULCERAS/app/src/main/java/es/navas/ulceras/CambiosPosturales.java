@@ -132,6 +132,9 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         // Another interface callback
     }
 
+    /*
+        Inicializa el numero de posturas que gestiona el sistema y le asigna un color a cada postura
+     */
     public void init(){
         // establecer numero de posturas distintas que se tienen en cuenta
         NUM_POSTURAS = registroGeneralClasses.size();
@@ -147,7 +150,10 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
 
     }
 
-    // Modificar el número de cambios posturales reflejados en el gráfico
+
+    /*
+        Modificar el número de cambios posturales reflejados en el gráfico
+     */
     public void updateMaxSteps(int _n){
         MAX_STEPS = _n;
         steps = new float[MAX_STEPS];
@@ -156,6 +162,13 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         }
     }
 
+    /*
+        Genera el gráfico con los datos existentes
+
+        Parametros:
+            - historic (boolean): indica si se han obtenido datos desde la BD
+            - numDatos (int): indica el número de datos cargados desde la BD
+     */
     public static void drawChart(boolean historic, final int numDatos){
         if(historic) {
             Utils.log("Cargando "+numDatos+" datos");
@@ -226,6 +239,9 @@ public class CambiosPosturales extends AppCompatActivity implements AdapterView.
         updateLastPosture(registroGeneralPosturas.get(registroGeneralPosturas.size()-1)); // Pasamos el último registro de actividad almacenado
     }
 
+    /*
+        Modifica la imagen con la ultima postura que se ha cargado en el gráfico
+     */
     private static void updateLastPosture (RegistroPosturas.Posturas lastPosture){
         switch (lastPosture.getL()){
             case "S":

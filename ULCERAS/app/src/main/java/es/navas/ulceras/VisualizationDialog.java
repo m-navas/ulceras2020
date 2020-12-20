@@ -59,8 +59,8 @@ public class VisualizationDialog extends Dialog implements View.OnClickListener 
         btn_alerts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent i = new Intent(context, SensorDataVisualization.class);
-                //context.startActivity(i);
+                Intent i = new Intent(context, AlertsChart.class);
+                context.startActivity(i);
             }
         });
 

@@ -148,6 +148,9 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
         // Another interface callback
     }
 
+    /*
+        Genera el gráfico con los datos existentes
+     */
     public static void setDataChartHist(){
         Utils.log("Num elements A hist: "+chartDataHist.xData.size());
         resetChart();
@@ -174,6 +177,7 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
 
         chartA.moveViewToX(indexHist);
 
+        // ¿que pasa si el index es demasiado grande?
         if(indexHist == Integer.MAX_VALUE){
             indexHist = 0;
             chartDataHist.clear();
@@ -183,6 +187,9 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
     }
 
 
+    /*
+        Cambia el textview de la UI y muestra un Toast
+     */
     private void updateUI() {
 
         new Thread() {
@@ -318,6 +325,9 @@ public class HistoricSensorData extends AppCompatActivity implements AdapterView
 
     // --- END MQTT ---
 
+    /*
+        Restablece el estado del gráfico
+     */
     private static void resetChart() {
         if(chartA.getData() != null)
             chartA.getData().clearValues();
