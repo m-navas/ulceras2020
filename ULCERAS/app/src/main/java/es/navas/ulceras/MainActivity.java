@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/document/d/13_EeidNA1UwiS43UtBPB5-5ldlFsC2JnIyJt2DtloSM/edit?usp=sharing"));
                 startActivity(browserIntent);
             }
         });
