@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     public static SensorData chartDataHist;
     // --- END SensorData Hist Parameters ---
 
-    private ImageView btn_connection, btn_visualization;
+    private ImageView btn_connection, btn_visualization, btn_about, btn_help;
     private TextView tv_connection;
 
     VisualizationDialog visualizationDialog;
@@ -151,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
         btn_visualization = findViewById(R.id.btn_visualization);
         btn_connection = findViewById(R.id.btn_connection);
         tv_connection = findViewById(R.id.tv_connection);
+        btn_help = findViewById(R.id.btn_help);
+        btn_about = findViewById(R.id.btn_about);
 
         btn_visualization.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +166,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 changeSensorsState();
+            }
+        });
+
+        btn_help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+                startActivity(browserIntent);
+            }
+        });
+
+        btn_about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mainContext, About.class);
+                startActivity(i);
             }
         });
 
@@ -247,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
         //Establecer el numero de posturas distintas (classes) si no se ha realizado en esta ejecución de la App
         if(registroGeneralClassesAlertas.isEmpty()){
             for (Map.Entry<String, String> entry : nuevoRegistro.getClasses().entrySet()) {
-                Utils.log("clave=" + entry.getKey() + ", valor=" + entry.getValue());
+                //Utils.log("clave=" + entry.getKey() + ", valor=" + entry.getValue());
                 registroGeneralClassesAlertas.put(entry.getKey(), entry.getValue());
             }
         }
@@ -364,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
             Utils.log("Mensaje del topic <"+sTopic+ ">: "+ msg);
 
             if(sTopic.equals("/alert")){
-                Utils.log("Datos de alerta recibidos: "+msg);
+                //Utils.log("Datos de alerta recibidos: "+msg);
                 newAlertData(msg);
             }else if(sTopic.contains("/record_data/recovery/sensors/")){ // DATOS DE SENSORES DESDE BD
                 //Utils.log(msg);

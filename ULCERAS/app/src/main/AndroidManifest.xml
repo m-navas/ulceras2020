@@ -12,8 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".AlertsChart"
+            android:name=".About"
             android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".AlertsChart"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".HistoricSensorData"
             android:screenOrientation="landscape" />

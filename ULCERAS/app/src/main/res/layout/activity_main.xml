@@ -143,8 +143,8 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/btn_disconnect"
-                        android:src="@drawable/disconnect"
+                        android:id="@+id/btn_help"
+                        android:src="@drawable/help"
                         android:layout_width="80dp"
                         android:layout_height="80dp" />
 
@@ -152,7 +152,7 @@
                         android:layout_marginTop="12dp"
                         android:textColor="#6f6f6f"
                         android:textSize="18sp"
-                        android:text="Desconectar"
+                        android:text="Manual de usuario"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -179,16 +179,16 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/btn_help"
+                        android:id="@+id/btn_about"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:src="@drawable/help" />
+                        android:src="@drawable/info" />
 
                     <TextView
                         android:layout_marginTop="12dp"
                         android:textColor="#6f6f6f"
                         android:textSize="18sp"
-                        android:text="Ayuda"
+                        android:text="Acerca de"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -197,77 +197,7 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                app:cardElevation="6dp"
-                app:cardCornerRadius="12dp"
-                android:layout_margin="12dp"
-                >
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/btn_position_RT"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/bookmark" />
-
-                    <TextView
-                        android:layout_marginTop="12dp"
-                        android:textColor="#6f6f6f"
-                        android:textSize="18sp"
-                        android:text="Calendar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                app:cardElevation="6dp"
-                app:cardCornerRadius="12dp"
-                android:layout_margin="12dp"
-                >
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/btn_history"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/history" />
-
-                    <TextView
-                        android:layout_marginTop="12dp"
-                        android:textColor="#6f6f6f"
-                        android:textSize="18sp"
-                        android:text="Historico"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
+            
         </GridLayout>
     </LinearLayout>
 
